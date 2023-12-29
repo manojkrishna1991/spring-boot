@@ -16,6 +16,7 @@
 
 package org.springframework.boot.jarmode.layertools;
 
+import io.github.pixee.security.ZipSecurity;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -65,7 +66,7 @@ class ExtractCommand extends Command {
 					mkDirs(new File(destination, layer));
 				}
 			}
-			try (ZipInputStream zip = new ZipInputStream(new FileInputStream(this.context.getArchiveFile()))) {
+			try (ZipInputStream zip = ZipSecurity.createHardenedInputStream(new FileInputStream(this.context.getArchiveFile()))) {
 				ZipEntry entry = zip.getNextEntry();
 				Assert.state(entry != null, "File '" + this.context.getArchiveFile().toString()
 						+ "' is not compatible with layertools; ensure jar file is valid and launch script is not enabled");
