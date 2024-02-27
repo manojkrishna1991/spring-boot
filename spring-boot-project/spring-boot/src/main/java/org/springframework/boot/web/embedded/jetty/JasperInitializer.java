@@ -16,6 +16,8 @@
 
 package org.springframework.boot.web.embedded.jetty;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -143,7 +145,7 @@ class JasperInitializer extends AbstractLifeCycle {
 
 		protected WarURLConnection(URL url) throws IOException {
 			super(url);
-			this.connection = new URL(url.getFile()).openConnection();
+			this.connection = Urls.create(url.getFile(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openConnection();
 		}
 
 		@Override

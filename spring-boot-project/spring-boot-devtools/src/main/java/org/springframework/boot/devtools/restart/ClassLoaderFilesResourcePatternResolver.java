@@ -16,6 +16,8 @@
 
 package org.springframework.boot.devtools.restart;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -128,7 +130,7 @@ final class ClassLoaderFilesResourcePatternResolver implements ResourcePatternRe
 				String name = entry.getKey();
 				ClassLoaderFile file = entry.getValue();
 				if (file.getKind() != Kind.DELETED && this.antPathMatcher.match(trimmedLocationPattern, name)) {
-					URL url = new URL("reloaded", null, -1, "/" + name, new ClassLoaderFileURLStreamHandler(file));
+					URL url = Urls.create("reloaded", null, -1, "/" + name, new ClassLoaderFileURLStreamHandler(file), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 					UrlResource resource = new UrlResource(url);
 					additionalResources.add(resource);
 				}
