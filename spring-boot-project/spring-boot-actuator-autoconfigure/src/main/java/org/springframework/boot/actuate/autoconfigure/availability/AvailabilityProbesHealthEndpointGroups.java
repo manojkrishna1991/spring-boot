@@ -104,7 +104,7 @@ class AvailabilityProbesHealthEndpointGroups implements HealthEndpointGroups {
 	}
 
 	private boolean isProbeGroup(String name) {
-		return name.equals(LIVENESS) || name.equals(READINESS);
+		return LIVENESS.equals(name) || READINESS.equals(name);
 	}
 
 }

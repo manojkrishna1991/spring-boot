@@ -109,7 +109,7 @@ class LombokPropertyDescriptor extends PropertyDescriptor<VariableElement> {
 	private boolean isAccessLevelPublic(MetadataGenerationEnvironment env, AnnotationMirror lombokAnnotation) {
 		Map<String, Object> values = env.getAnnotationElementValues(lombokAnnotation);
 		Object value = values.get("value");
-		return (value == null || value.toString().equals(LOMBOK_ACCESS_LEVEL_PUBLIC));
+		return (value == null || LOMBOK_ACCESS_LEVEL_PUBLIC.equals(value.toString()));
 	}
 
 }

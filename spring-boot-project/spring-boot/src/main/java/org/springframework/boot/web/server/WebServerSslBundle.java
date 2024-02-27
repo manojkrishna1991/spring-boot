@@ -180,7 +180,7 @@ public final class WebServerSslBundle implements SslBundle {
 
 	private static boolean hasJavaKeyStoreProperties(Ssl ssl) {
 		return Ssl.isEnabled(ssl) && ssl.getKeyStore() != null
-				|| (ssl.getKeyStoreType() != null && ssl.getKeyStoreType().equals("PKCS11"));
+				|| (ssl.getKeyStoreType() != null && "PKCS11".equals(ssl.getKeyStoreType()));
 	}
 
 	/**

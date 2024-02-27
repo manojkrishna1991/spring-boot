@@ -46,7 +46,7 @@ public class DockerConnectionException extends RuntimeException {
 	}
 
 	private static String getCauseMessage(Exception cause) {
-		if (cause.getCause() != null && cause.getCause().getClass().getName().equals(JNA_EXCEPTION_CLASS_NAME)) {
+		if (cause.getCause() != null && JNA_EXCEPTION_CLASS_NAME.equals(cause.getCause().getClass().getName())) {
 			return cause.getCause().getMessage();
 		}
 		return cause.getMessage();

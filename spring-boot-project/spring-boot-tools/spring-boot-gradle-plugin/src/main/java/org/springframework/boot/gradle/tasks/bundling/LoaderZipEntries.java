@@ -62,7 +62,7 @@ class LoaderZipEntries {
 				getClass().getResourceAsStream("/" + this.loaderImplementation.getJarResourceName()))) {
 			java.util.zip.ZipEntry entry = loaderJar.getNextEntry();
 			while (entry != null) {
-				if (entry.isDirectory() && !entry.getName().equals("META-INF/")) {
+				if (entry.isDirectory() && !"META-INF/".equals(entry.getName())) {
 					writeDirectory(new ZipArchiveEntry(entry), out);
 					written.addDirectory(entry);
 				}

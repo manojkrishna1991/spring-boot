@@ -138,7 +138,7 @@ public class Handler extends URLStreamHandler {
 
 	@Override
 	protected boolean sameFile(URL url1, URL url2) {
-		if (!url1.getProtocol().equals(PROTOCOL) || !url2.getProtocol().equals(PROTOCOL)) {
+		if (!PROTOCOL.equals(url1.getProtocol()) || !PROTOCOL.equals(url2.getProtocol())) {
 			return false;
 		}
 		String file1 = url1.getFile();

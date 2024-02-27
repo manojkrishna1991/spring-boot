@@ -100,7 +100,7 @@ public class JksSslStoreBundle implements SslStoreBundle {
 	}
 
 	private boolean isHardwareKeystoreType(String type) {
-		return type.equalsIgnoreCase("PKCS11");
+		return "PKCS11".equalsIgnoreCase(type);
 	}
 
 	private void loadHardwareKeyStore(KeyStore store, String location, char[] password)

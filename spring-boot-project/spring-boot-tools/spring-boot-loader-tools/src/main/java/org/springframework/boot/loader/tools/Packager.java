@@ -485,10 +485,10 @@ public abstract class Packager {
 		private boolean isTransformable(JarArchiveEntry entry) {
 			String name = entry.getName();
 			if (name.startsWith("META-INF/")) {
-				return name.equals("META-INF/aop.xml") || name.endsWith(".kotlin_module")
+				return "META-INF/aop.xml".equals(name) || name.endsWith(".kotlin_module")
 						|| name.startsWith("META-INF/services/");
 			}
-			return !name.startsWith("BOOT-INF/") && !name.equals("module-info.class");
+			return !name.startsWith("BOOT-INF/") && !"module-info.class".equals(name);
 		}
 
 	}

@@ -76,7 +76,7 @@ public class LaunchedClassLoader extends JarUrlClassLoader {
 
 	@Override
 	protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-		if (name.startsWith(JAR_MODE_PACKAGE_PREFIX) || name.equals(JAR_MODE_RUNNER_CLASS_NAME)) {
+		if (name.startsWith(JAR_MODE_PACKAGE_PREFIX) || JAR_MODE_RUNNER_CLASS_NAME.equals(name)) {
 			try {
 				Class<?> result = loadClassInLaunchedClassLoader(name);
 				if (resolve) {

@@ -228,7 +228,7 @@ public abstract class AbstractJarWriter implements LoaderClassesWriter {
 	}
 
 	private boolean isDirectoryEntry(JarEntry entry) {
-		return entry.isDirectory() && !entry.getName().equals("META-INF/");
+		return entry.isDirectory() && !"META-INF/".equals(entry.getName());
 	}
 
 	private boolean isClassEntry(JarEntry entry) {

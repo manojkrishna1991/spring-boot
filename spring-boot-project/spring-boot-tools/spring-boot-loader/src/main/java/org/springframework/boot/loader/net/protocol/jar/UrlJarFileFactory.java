@@ -67,11 +67,11 @@ class UrlJarFileFactory {
 	}
 
 	private boolean isLocalFileUrl(URL url) {
-		return url.getProtocol().equalsIgnoreCase("file") && isLocal(url.getHost());
+		return "file".equalsIgnoreCase(url.getProtocol()) && isLocal(url.getHost());
 	}
 
 	private boolean isLocal(String host) {
-		return host == null || host.isEmpty() || host.equals("~") || host.equalsIgnoreCase("localhost");
+		return host == null || host.isEmpty() || "~".equals(host) || "localhost".equalsIgnoreCase(host);
 	}
 
 	private JarFile createJarFileForLocalFile(URL url, Runtime.Version version, Consumer<JarFile> closeAction)
@@ -117,7 +117,7 @@ class UrlJarFileFactory {
 	}
 
 	static boolean isNestedUrl(URL url) {
-		return url.getProtocol().equalsIgnoreCase("nested");
+		return "nested".equalsIgnoreCase(url.getProtocol());
 	}
 
 }

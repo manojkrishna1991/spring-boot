@@ -62,7 +62,7 @@ public class DefaultRestartInitializer implements RestartInitializer {
 	 * @since 2.4.0
 	 */
 	protected boolean isMainThread(Thread thread) {
-		return thread.getName().equals("main");
+		return "main".equals(thread.getName());
 	}
 
 	/**

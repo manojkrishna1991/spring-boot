@@ -271,7 +271,7 @@ public class ServletContextInitializerBeans extends AbstractCollection<ServletCo
 		@Override
 		public RegistrationBean createRegistrationBean(String name, Servlet source, int totalNumberOfSourceBeans) {
 			String url = (totalNumberOfSourceBeans != 1) ? "/" + name + "/" : "/";
-			if (name.equals(DISPATCHER_SERVLET_NAME)) {
+			if (DISPATCHER_SERVLET_NAME.equals(name)) {
 				url = "/"; // always map the main dispatcherServlet to "/"
 			}
 			ServletRegistrationBean<Servlet> bean = new ServletRegistrationBean<>(source, url);

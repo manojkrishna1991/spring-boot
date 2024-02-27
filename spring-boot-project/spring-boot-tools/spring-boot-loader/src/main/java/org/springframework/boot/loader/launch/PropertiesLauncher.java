@@ -324,7 +324,7 @@ public class PropertiesLauncher extends Launcher {
 			return path.substring(0, path.length() - 1);
 		}
 		// It's a directory
-		return (!path.endsWith("/") && !path.equals(".")) ? path + "/" : path;
+		return (!path.endsWith("/") && !".".equals(path)) ? path + "/" : path;
 	}
 
 	@Override
@@ -499,7 +499,7 @@ public class PropertiesLauncher extends Launcher {
 
 	private Set<URL> getClassPathUrlsForNested(String path) throws Exception {
 		boolean isJustArchive = isArchive(path);
-		if (!path.equals("/") && path.startsWith("/")
+		if (!"/".equals(path) && path.startsWith("/")
 				|| (this.archive.isExploded() && this.archive.getRootDirectory().equals(this.homeDirectory))) {
 			return Collections.emptySet();
 		}
@@ -518,7 +518,7 @@ public class PropertiesLauncher extends Launcher {
 			path = path.substring(separatorIndex + 1);
 			path = stripLeadingSlashes(path);
 		}
-		if (path.equals("/") || path.equals("./") || path.equals(".")) {
+		if ("/".equals(path) || "./".equals(path) || ".".equals(path)) {
 			// The prefix for nested jars is actually empty if it's at the root
 			path = "";
 		}

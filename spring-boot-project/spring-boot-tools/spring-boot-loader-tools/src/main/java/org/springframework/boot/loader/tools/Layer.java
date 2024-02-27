@@ -41,7 +41,7 @@ public class Layer {
 	public Layer(String name) {
 		Assert.hasText(name, "Name must not be empty");
 		Assert.isTrue(PATTERN.matcher(name).matches(), () -> "Malformed layer name '" + name + "'");
-		Assert.isTrue(!name.equalsIgnoreCase("ext") && !name.toLowerCase().startsWith("springboot"),
+		Assert.isTrue(!"ext".equalsIgnoreCase(name) && !name.toLowerCase().startsWith("springboot"),
 				() -> "Layer name '" + name + "' is reserved");
 		this.name = name;
 	}

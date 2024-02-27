@@ -48,7 +48,7 @@ public class WarLauncher extends ExecutableArchiveLauncher {
 	static boolean isLibraryFileOrClassesDirectory(Archive.Entry entry) {
 		String name = entry.name();
 		if (entry.isDirectory()) {
-			return name.equals("WEB-INF/classes/");
+			return "WEB-INF/classes/".equals(name);
 		}
 		return name.startsWith("WEB-INF/lib/") || name.startsWith("WEB-INF/lib-provided/");
 	}

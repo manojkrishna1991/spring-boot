@@ -49,7 +49,7 @@ public class JarLauncher extends ExecutableArchiveLauncher {
 	static boolean isLibraryFileOrClassesDirectory(Archive.Entry entry) {
 		String name = entry.name();
 		if (entry.isDirectory()) {
-			return name.equals("BOOT-INF/classes/");
+			return "BOOT-INF/classes/".equals(name);
 		}
 		return name.startsWith("BOOT-INF/lib/");
 	}

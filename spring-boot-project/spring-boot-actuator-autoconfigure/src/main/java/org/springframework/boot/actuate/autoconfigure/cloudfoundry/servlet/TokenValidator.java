@@ -59,7 +59,7 @@ class TokenValidator {
 		if (algorithm == null) {
 			throw new CloudFoundryAuthorizationException(Reason.INVALID_SIGNATURE, "Signing algorithm cannot be null");
 		}
-		if (!algorithm.equals("RS256")) {
+		if (!"RS256".equals(algorithm)) {
 			throw new CloudFoundryAuthorizationException(Reason.UNSUPPORTED_TOKEN_SIGNING_ALGORITHM,
 					"Signing algorithm " + algorithm + " not supported");
 		}

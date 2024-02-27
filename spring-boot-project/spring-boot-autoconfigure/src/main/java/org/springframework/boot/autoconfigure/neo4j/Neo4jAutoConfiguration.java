@@ -105,7 +105,7 @@ public class Neo4jAutoConfiguration {
 		catch (IllegalArgumentException ex) {
 			throw new IllegalArgumentException(String.format("'%s' is not a supported scheme.", scheme));
 		}
-		return lowerCaseScheme.equals("bolt") || lowerCaseScheme.equals("neo4j");
+		return "bolt".equals(lowerCaseScheme) || "neo4j".equals(lowerCaseScheme);
 	}
 
 	private void configurePoolSettings(Config.ConfigBuilder builder, Pool pool) {

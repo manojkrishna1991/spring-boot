@@ -247,7 +247,7 @@ public class WebMvcAutoConfiguration {
 				configurer.setPathMatcher(new AntPathMatcher());
 				this.dispatcherServletPath.ifAvailable((dispatcherPath) -> {
 					String servletUrlMapping = dispatcherPath.getServletUrlMapping();
-					if (servletUrlMapping.equals("/") && singleDispatcherServlet()) {
+					if ("/".equals(servletUrlMapping) && singleDispatcherServlet()) {
 						UrlPathHelper urlPathHelper = new UrlPathHelper();
 						urlPathHelper.setAlwaysUseFullPath(true);
 						configurer.setUrlPathHelper(urlPathHelper);

@@ -311,7 +311,7 @@ public class Log4J2LoggingSystem extends AbstractLoggingSystem {
 		}
 		AuthorizationProvider authorizationProvider = ConfigurationFactory
 			.authorizationProvider(PropertiesUtil.getProperties());
-		SslConfiguration sslConfiguration = url.getProtocol().equals("https")
+		SslConfiguration sslConfiguration = "https".equals(url.getProtocol())
 				? SslConfigurationFactory.getSslConfiguration() : null;
 		URLConnection connection = UrlConnectionFactory.createConnection(url, 0, sslConfiguration,
 				authorizationProvider);

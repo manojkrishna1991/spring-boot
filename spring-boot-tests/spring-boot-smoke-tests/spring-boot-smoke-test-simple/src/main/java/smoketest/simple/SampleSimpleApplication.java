@@ -38,7 +38,7 @@ public class SampleSimpleApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) {
 		System.out.println(this.helloWorldService.getHelloMessage());
-		if (args.length > 0 && args[0].equals("exitcode")) {
+		if (args.length > 0 && "exitcode".equals(args[0])) {
 			throw new ExitException();
 		}
 	}
