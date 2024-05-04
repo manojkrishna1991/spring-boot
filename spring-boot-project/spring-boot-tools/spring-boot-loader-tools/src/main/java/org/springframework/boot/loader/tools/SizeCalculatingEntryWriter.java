@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 import org.springframework.util.StreamUtils;
 
@@ -120,7 +121,7 @@ final class SizeCalculatingEntryWriter implements EntryWriter {
 
 		private void initializeTempFile() throws IOException {
 			if (this.tempFile == null) {
-				this.tempFile = File.createTempFile("springboot-", "-entrycontent");
+				this.tempFile = Files.createTempFile("springboot-", "-entrycontent").toFile();
 				this.tempFile.deleteOnExit();
 			}
 		}
