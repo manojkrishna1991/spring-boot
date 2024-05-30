@@ -16,6 +16,7 @@
 
 package org.springframework.boot.loader;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -98,12 +99,12 @@ final class ClassPathIndexFile {
 	private static List<String> loadLines(InputStream inputStream) throws IOException {
 		List<String> lines = new ArrayList<>();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-		String line = reader.readLine();
+		String line = BoundedLineReader.readLine(reader, 5_000_000);
 		while (line != null) {
 			if (!line.trim().isEmpty()) {
 				lines.add(line);
 			}
-			line = reader.readLine();
+			line = BoundedLineReader.readLine(reader, 5_000_000);
 		}
 		return Collections.unmodifiableList(lines);
 	}

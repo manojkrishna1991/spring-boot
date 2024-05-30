@@ -16,6 +16,7 @@
 
 package org.springframework.boot.docker.compose.core;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -150,14 +151,14 @@ class ProcessRunner {
 		public void run() {
 			try (BufferedReader reader = new BufferedReader(
 					new InputStreamReader(this.source, StandardCharsets.UTF_8))) {
-				String line = reader.readLine();
+				String line = BoundedLineReader.readLine(reader, 5_000_000);
 				while (line != null) {
 					this.output.append(line);
 					this.output.append("\n");
 					if (this.outputConsumer != null) {
 						this.outputConsumer.accept(line);
 					}
-					line = reader.readLine();
+					line = BoundedLineReader.readLine(reader, 5_000_000);
 				}
 				this.latch.countDown();
 			}
