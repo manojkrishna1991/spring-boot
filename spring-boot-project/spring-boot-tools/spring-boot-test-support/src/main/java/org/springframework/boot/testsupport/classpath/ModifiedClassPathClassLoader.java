@@ -16,6 +16,8 @@
 
 package org.springframework.boot.testsupport.classpath;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.AnnotatedElement;
@@ -195,7 +197,7 @@ final class ModifiedClassPathClassLoader extends URLClassLoader {
 		List<URL> urls = new ArrayList<>();
 		try {
 			for (String entry : getClassPath(booterJar)) {
-				urls.add(new URL(entry));
+				urls.add(Urls.create(entry, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
 			}
 		}
 		catch (Exception ex) {

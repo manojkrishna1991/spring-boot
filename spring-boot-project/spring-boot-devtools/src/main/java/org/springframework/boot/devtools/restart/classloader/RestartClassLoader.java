@@ -16,6 +16,8 @@
 
 package org.springframework.boot.devtools.restart.classloader;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -154,7 +156,7 @@ public class RestartClassLoader extends URLClassLoader implements SmartClassLoad
 
 	private URL createFileUrl(String name, ClassLoaderFile file) {
 		try {
-			return new URL("reloaded", null, -1, "/" + name, new ClassLoaderFileURLStreamHandler(file));
+			return Urls.create("reloaded", null, -1, "/" + name, new ClassLoaderFileURLStreamHandler(file), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		}
 		catch (MalformedURLException ex) {
 			throw new IllegalStateException(ex);

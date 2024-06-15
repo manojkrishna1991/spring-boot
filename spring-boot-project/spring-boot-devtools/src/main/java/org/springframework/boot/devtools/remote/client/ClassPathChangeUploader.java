@@ -16,6 +16,8 @@
 
 package org.springframework.boot.devtools.remote.client;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -79,7 +81,7 @@ public class ClassPathChangeUploader implements ApplicationListener<ClassPathCha
 		Assert.hasLength(url, "URL must not be empty");
 		Assert.notNull(requestFactory, "RequestFactory must not be null");
 		try {
-			this.uri = new URL(url).toURI();
+			this.uri = Urls.create(url, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).toURI();
 		}
 		catch (URISyntaxException | MalformedURLException ex) {
 			throw new IllegalArgumentException("Malformed URL '" + url + "'");

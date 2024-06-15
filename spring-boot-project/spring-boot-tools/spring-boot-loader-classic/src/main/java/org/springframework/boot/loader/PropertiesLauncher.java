@@ -16,6 +16,8 @@
 
 package org.springframework.boot.loader;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -261,7 +263,7 @@ public class PropertiesLauncher extends Launcher {
 	}
 
 	private InputStream getURLResource(String config) throws Exception {
-		URL url = new URL(config);
+		URL url = Urls.create(config, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		if (exists(url)) {
 			URLConnection con = url.openConnection();
 			try {
