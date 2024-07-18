@@ -16,6 +16,7 @@
 
 package org.springframework.boot.logging.logback;
 
+import io.github.pixee.security.ObjectInputFilters;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -314,6 +315,7 @@ class SpringBootJoranConfigurator extends JoranConfigurator {
 			try (InputStream modelInput = getClass().getClassLoader()
 				.getResourceAsStream(ModelWriter.MODEL_RESOURCE_LOCATION)) {
 				try (ObjectInputStream input = new ObjectInputStream(modelInput)) {
+					ObjectInputFilters.enableObjectFilterIfUnprotected(input);
 					Model model = (Model) input.readObject();
 					ModelUtil.resetForReuse(model);
 					return model;

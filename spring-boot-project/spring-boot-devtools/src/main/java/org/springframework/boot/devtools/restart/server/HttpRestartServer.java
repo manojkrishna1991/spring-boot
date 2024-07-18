@@ -16,6 +16,7 @@
 
 package org.springframework.boot.devtools.restart.server;
 
+import io.github.pixee.security.ObjectInputFilters;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
@@ -71,6 +72,7 @@ public class HttpRestartServer {
 		try {
 			Assert.state(request.getHeaders().getContentLength() > 0, "No content");
 			ObjectInputStream objectInputStream = new ObjectInputStream(request.getBody());
+			ObjectInputFilters.enableObjectFilterIfUnprotected(objectInputStream);
 			ClassLoaderFiles files = (ClassLoaderFiles) objectInputStream.readObject();
 			objectInputStream.close();
 			this.server.updateAndRestart(files);
