@@ -16,6 +16,7 @@
 
 package org.springframework.boot.web.servlet.support;
 
+import static io.github.pixee.security.jakarta.PathValidator.validateDispatcherPath;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -156,7 +157,7 @@ public class ErrorPageFilter implements Filter, ErrorPageRegistry, Ordered {
 		}
 		response.setStatus(status);
 		setErrorAttributes(request, status, message);
-		request.getRequestDispatcher(errorPath).forward(request, response);
+		request.getRequestDispatcher(validateDispatcherPath(errorPath)).forward(request, response);
 	}
 
 	private void handleException(HttpServletRequest request, HttpServletResponse response, ErrorWrapperResponse wrapped,
@@ -186,7 +187,7 @@ public class ErrorPageFilter implements Filter, ErrorPageRegistry, Ordered {
 		request.setAttribute(ERROR_EXCEPTION_TYPE, ex.getClass());
 		response.reset();
 		response.setStatus(500);
-		request.getRequestDispatcher(path).forward(request, response);
+		request.getRequestDispatcher(validateDispatcherPath(path)).forward(request, response);
 		request.removeAttribute(ERROR_EXCEPTION);
 		request.removeAttribute(ERROR_EXCEPTION_TYPE);
 	}
