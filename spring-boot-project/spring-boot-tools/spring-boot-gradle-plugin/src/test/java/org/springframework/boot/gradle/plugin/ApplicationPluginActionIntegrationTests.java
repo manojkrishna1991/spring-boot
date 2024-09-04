@@ -16,6 +16,7 @@
 
 package org.springframework.boot.gradle.plugin;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -167,7 +168,7 @@ class ApplicationPluginActionIntegrationTests {
 		BufferedReader reader = new BufferedReader(new StringReader(output));
 		String line;
 		Set<String> configured = new HashSet<>();
-		while ((line = reader.readLine()) != null) {
+		while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
 			if (line.startsWith("Configuring :")) {
 				configured.add(line.substring("Configuring :".length()));
 			}

@@ -16,6 +16,7 @@
 
 package org.springframework.boot.gradle.tasks.bundling;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -697,7 +698,7 @@ abstract class AbstractBootArchiveIntegrationTests {
 		Map<String, List<String>> index = new LinkedHashMap<>();
 		ZipEntry indexEntry = jarFile.getEntry(this.indexPath + "layers.idx");
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(jarFile.getInputStream(indexEntry)))) {
-			String line = reader.readLine();
+			String line = BoundedLineReader.readLine(reader, 5_000_000);
 			String layer = null;
 			while (line != null) {
 				if (line.startsWith("- ")) {
@@ -706,7 +707,7 @@ abstract class AbstractBootArchiveIntegrationTests {
 				else if (line.startsWith("  - ")) {
 					index.computeIfAbsent(layer, (key) -> new ArrayList<>()).add(line.substring(5, line.length() - 1));
 				}
-				line = reader.readLine();
+				line = BoundedLineReader.readLine(reader, 5_000_000);
 			}
 			return index;
 		}

@@ -16,6 +16,7 @@
 
 package org.springframework.boot.maven;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -78,7 +79,7 @@ abstract class AbstractArchiveIntegrationTests {
 		String entryPrefix = "  - ";
 		ZipEntry indexEntry = jarFile.getEntry(getLayersIndexLocation());
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(jarFile.getInputStream(indexEntry)))) {
-			String line = reader.readLine();
+			String line = BoundedLineReader.readLine(reader, 5_000_000);
 			String layer = null;
 			while (line != null) {
 				if (line.startsWith(layerPrefix)) {
@@ -89,7 +90,7 @@ abstract class AbstractArchiveIntegrationTests {
 					index.computeIfAbsent(layer, (key) -> new ArrayList<>())
 						.add(line.substring(entryPrefix.length() + 1, line.length() - 1));
 				}
-				line = reader.readLine();
+				line = BoundedLineReader.readLine(reader, 5_000_000);
 			}
 			return index;
 		}
@@ -104,12 +105,12 @@ abstract class AbstractArchiveIntegrationTests {
 		String entryPrefix = "- ";
 		ZipEntry indexEntry = jarFile.getEntry(location);
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(jarFile.getInputStream(indexEntry)))) {
-			String line = reader.readLine();
+			String line = BoundedLineReader.readLine(reader, 5_000_000);
 			while (line != null) {
 				if (line.startsWith(entryPrefix)) {
 					index.add(line.substring(entryPrefix.length() + 1, line.length() - 1));
 				}
-				line = reader.readLine();
+				line = BoundedLineReader.readLine(reader, 5_000_000);
 			}
 		}
 		return index;
