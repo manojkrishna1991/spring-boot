@@ -16,6 +16,8 @@
 
 package org.springframework.boot.loader.net.protocol.jar;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.net.URL;
 import java.net.URLConnection;
@@ -64,7 +66,7 @@ class UrlJarFilesTests {
 	@BeforeEach
 	void setup() throws Exception {
 		this.file = new File(this.temp, "test.jar");
-		this.url = new URL("nested:" + this.file.getAbsolutePath() + "/!nested.jar");
+		this.url = Urls.create("nested:" + this.file.getAbsolutePath() + "/!nested.jar", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		TestJar.create(this.file);
 	}
 

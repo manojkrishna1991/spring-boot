@@ -16,6 +16,8 @@
 
 package org.springframework.boot.loader.net.protocol.jar;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -60,7 +62,7 @@ final class JarUrlConnection extends java.net.JarURLConnection {
 	static final JarUrlConnection NOT_FOUND_CONNECTION;
 	static {
 		try {
-			NOT_FOUND_URL = new URL("jar:", null, 0, "nested:!/", new EmptyUrlStreamHandler());
+			NOT_FOUND_URL = Urls.create("jar:", null, 0, "nested:!/", new EmptyUrlStreamHandler(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 			NOT_FOUND_CONNECTION = new JarUrlConnection(() -> FILE_NOT_FOUND_EXCEPTION);
 		}
 		catch (IOException ex) {
@@ -337,9 +339,9 @@ final class JarUrlConnection extends java.net.JarURLConnection {
 			int separator = spec.indexOf("!/");
 			boolean specHasEntry = (separator != -1) && (separator + 2 != spec.length());
 			if (specHasEntry) {
-				URL jarFileUrl = new URL(spec.substring(0, separator));
+				URL jarFileUrl = Urls.create(spec.substring(0, separator), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 				if ("runtime".equals(url.getRef())) {
-					jarFileUrl = new URL(jarFileUrl, "#runtime");
+					jarFileUrl = Urls.create(jarFileUrl, "#runtime", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 				}
 				String entryName = UrlDecoder.decode(spec.substring(separator + 2));
 				JarFile jarFile = jarFiles.getOrCreate(true, jarFileUrl);

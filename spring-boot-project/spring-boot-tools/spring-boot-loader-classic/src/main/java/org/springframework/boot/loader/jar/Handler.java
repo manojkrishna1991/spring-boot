@@ -16,6 +16,8 @@
 
 package org.springframework.boot.loader.jar;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
@@ -135,7 +137,7 @@ public class Handler extends URLStreamHandler {
 			file = file.substring(TOMCAT_WARFILE_PROTOCOL.length());
 			file = file.replaceFirst("\\*/", "!/");
 			try {
-				URLConnection connection = openConnection(new URL("jar:file:" + file));
+				URLConnection connection = openConnection(Urls.create("jar:file:" + file, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
 				connection.getInputStream().close();
 				return connection;
 			}
@@ -148,7 +150,7 @@ public class Handler extends URLStreamHandler {
 	private boolean isTomcatWarUrl(String file) {
 		if (file.startsWith(TOMCAT_WARFILE_PROTOCOL) || !file.contains("*/")) {
 			try {
-				URLConnection connection = new URL(file).openConnection();
+				URLConnection connection = Urls.create(file, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openConnection();
 				if (connection.getClass().getName().startsWith("org.apache.catalina")) {
 					return true;
 				}
@@ -170,7 +172,7 @@ public class Handler extends URLStreamHandler {
 	private URLConnection openFallbackContextConnection(URL url) {
 		try {
 			if (jarContextUrl != null) {
-				return new URL(jarContextUrl, url.toExternalForm()).openConnection();
+				return Urls.create(jarContextUrl, url.toExternalForm(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openConnection();
 			}
 		}
 		catch (Exception ex) {
@@ -187,7 +189,7 @@ public class Handler extends URLStreamHandler {
 	 */
 	private URLConnection openFallbackHandlerConnection(URL url) throws Exception {
 		URLStreamHandler fallbackHandler = getFallbackHandler();
-		return new URL(null, url.toExternalForm(), fallbackHandler).openConnection();
+		return Urls.create(null, url.toExternalForm(), fallbackHandler, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openConnection();
 	}
 
 	private URLStreamHandler getFallbackHandler() {
@@ -235,7 +237,7 @@ public class Handler extends URLStreamHandler {
 			throw new IllegalArgumentException("No !/ in spec '" + spec + "'");
 		}
 		try {
-			new URL(spec.substring(0, separatorIndex));
+			Urls.create(spec.substring(0, separatorIndex), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 			return spec;
 		}
 		catch (MalformedURLException ex) {
@@ -320,7 +322,7 @@ public class Handler extends URLStreamHandler {
 		String source = file.substring(0, separatorIndex);
 		String entry = canonicalize(file.substring(separatorIndex + 2));
 		try {
-			result += new URL(source).hashCode();
+			result += Urls.create(source, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).hashCode();
 		}
 		catch (MalformedURLException ex) {
 			result += source.hashCode();
@@ -351,7 +353,7 @@ public class Handler extends URLStreamHandler {
 		String root1 = u1.getFile().substring(0, separator1);
 		String root2 = u2.getFile().substring(0, separator2);
 		try {
-			return super.sameFile(new URL(root1), new URL(root2));
+			return super.sameFile(Urls.create(root1, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS), Urls.create(root2, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
 		}
 		catch (MalformedURLException ex) {
 			// Continue

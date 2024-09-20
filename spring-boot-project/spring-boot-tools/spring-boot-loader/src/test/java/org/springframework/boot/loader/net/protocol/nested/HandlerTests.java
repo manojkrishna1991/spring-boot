@@ -16,6 +16,8 @@
 
 package org.springframework.boot.loader.net.protocol.nested;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.net.URL;
 
@@ -46,7 +48,7 @@ class HandlerTests {
 
 	@Test
 	void openConnectionReturnsNestedUrlConnection() throws Exception {
-		URL url = new URL("nested:" + this.temp.getAbsolutePath() + "/!nested.jar");
+		URL url = Urls.create("nested:" + this.temp.getAbsolutePath() + "/!nested.jar", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		assertThat(url.openConnection()).isInstanceOf(NestedUrlConnection.class);
 	}
 

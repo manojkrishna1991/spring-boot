@@ -16,6 +16,8 @@
 
 package org.springframework.boot.loaderapp;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -51,7 +53,7 @@ public class LoaderTestApplication {
 				System.out.println(">>>>> jar written to temp");
 			}
 			byte[] resourceContent = FileCopyUtils.copyToByteArray(resourceUrl.openStream());
-			URL directUrl = new URL(resourceUrl.toExternalForm());
+			URL directUrl = Urls.create(resourceUrl.toExternalForm(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 			byte[] directContent = FileCopyUtils.copyToByteArray(directUrl.openStream());
 			String message = (!Arrays.equals(resourceContent, directContent)) ? "NO MATCH"
 					: directContent.length + " BYTES";

@@ -16,6 +16,8 @@
 
 package org.springframework.boot.loader.jar;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -61,21 +63,21 @@ class JarURLConnectionTests {
 
 	@Test
 	void connectionToRootUsingAbsoluteUrl() throws Exception {
-		URL url = new URL("jar:" + this.rootJarFile.toURI().toURL() + "!/");
+		URL url = Urls.create("jar:" + this.rootJarFile.toURI().toURL() + "!/", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		Object content = JarURLConnection.get(url, this.jarFile).getContent();
 		assertThat(JarFileWrapper.unwrap((java.util.jar.JarFile) content)).isSameAs(this.jarFile);
 	}
 
 	@Test
 	void connectionToRootUsingRelativeUrl() throws Exception {
-		URL url = new URL("jar:file:" + getRelativePath() + "!/");
+		URL url = Urls.create("jar:file:" + getRelativePath() + "!/", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		Object content = JarURLConnection.get(url, this.jarFile).getContent();
 		assertThat(JarFileWrapper.unwrap((java.util.jar.JarFile) content)).isSameAs(this.jarFile);
 	}
 
 	@Test
 	void connectionToEntryUsingAbsoluteUrl() throws Exception {
-		URL url = new URL("jar:" + this.rootJarFile.toURI().toURL() + "!/1.dat");
+		URL url = Urls.create("jar:" + this.rootJarFile.toURI().toURL() + "!/1.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		try (InputStream input = JarURLConnection.get(url, this.jarFile).getInputStream()) {
 			assertThat(input).hasBinaryContent(new byte[] { 1 });
 		}
@@ -83,7 +85,7 @@ class JarURLConnectionTests {
 
 	@Test
 	void connectionToEntryUsingRelativeUrl() throws Exception {
-		URL url = new URL("jar:file:" + getRelativePath() + "!/1.dat");
+		URL url = Urls.create("jar:file:" + getRelativePath() + "!/1.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		try (InputStream input = JarURLConnection.get(url, this.jarFile).getInputStream()) {
 			assertThat(input).hasBinaryContent(new byte[] { 1 });
 		}
@@ -91,7 +93,7 @@ class JarURLConnectionTests {
 
 	@Test
 	void connectionToEntryUsingAbsoluteUrlWithFileColonSlashSlashPrefix() throws Exception {
-		URL url = new URL("jar:" + this.rootJarFile.toURI().toURL() + "!/1.dat");
+		URL url = Urls.create("jar:" + this.rootJarFile.toURI().toURL() + "!/1.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		try (InputStream input = JarURLConnection.get(url, this.jarFile).getInputStream()) {
 			assertThat(input).hasBinaryContent(new byte[] { 1 });
 		}
@@ -99,7 +101,7 @@ class JarURLConnectionTests {
 
 	@Test
 	void connectionToEntryUsingAbsoluteUrlForNestedEntry() throws Exception {
-		URL url = new URL("jar:" + this.rootJarFile.toURI().toURL() + "!/nested.jar!/3.dat");
+		URL url = Urls.create("jar:" + this.rootJarFile.toURI().toURL() + "!/nested.jar!/3.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		JarURLConnection connection = JarURLConnection.get(url, this.jarFile);
 		try (InputStream input = connection.getInputStream()) {
 			assertThat(input).hasBinaryContent(new byte[] { 3 });
@@ -109,7 +111,7 @@ class JarURLConnectionTests {
 
 	@Test
 	void connectionToEntryUsingRelativeUrlForNestedEntry() throws Exception {
-		URL url = new URL("jar:file:" + getRelativePath() + "!/nested.jar!/3.dat");
+		URL url = Urls.create("jar:file:" + getRelativePath() + "!/nested.jar!/3.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		JarURLConnection connection = JarURLConnection.get(url, this.jarFile);
 		try (InputStream input = connection.getInputStream()) {
 			assertThat(input).hasBinaryContent(new byte[] { 3 });
@@ -119,7 +121,7 @@ class JarURLConnectionTests {
 
 	@Test
 	void connectionToEntryUsingAbsoluteUrlForEntryFromNestedJarFile() throws Exception {
-		URL url = new URL("jar:" + this.rootJarFile.toURI().toURL() + "!/nested.jar!/3.dat");
+		URL url = Urls.create("jar:" + this.rootJarFile.toURI().toURL() + "!/nested.jar!/3.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		try (JarFile nested = this.jarFile.getNestedJarFile(this.jarFile.getEntry("nested.jar"))) {
 			try (InputStream input = JarURLConnection.get(url, nested).getInputStream()) {
 				assertThat(input).hasBinaryContent(new byte[] { 3 });
@@ -129,7 +131,7 @@ class JarURLConnectionTests {
 
 	@Test
 	void connectionToEntryUsingRelativeUrlForEntryFromNestedJarFile() throws Exception {
-		URL url = new URL("jar:file:" + getRelativePath() + "!/nested.jar!/3.dat");
+		URL url = Urls.create("jar:file:" + getRelativePath() + "!/nested.jar!/3.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		try (JarFile nested = this.jarFile.getNestedJarFile(this.jarFile.getEntry("nested.jar"))) {
 			try (InputStream input = JarURLConnection.get(url, nested).getInputStream()) {
 				assertThat(input).hasBinaryContent(new byte[] { 3 });
@@ -139,8 +141,7 @@ class JarURLConnectionTests {
 
 	@Test
 	void connectionToEntryInNestedJarFromUrlThatUsesExistingUrlAsContext() throws Exception {
-		URL url = new URL(new URL("jar", null, -1, this.rootJarFile.toURI().toURL() + "!/nested.jar!/", new Handler()),
-				"/3.dat");
+		URL url = Urls.create(Urls.create("jar", null, -1, this.rootJarFile.toURI().toURL() + "!/nested.jar!/", new Handler(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS), "/3.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		try (JarFile nested = this.jarFile.getNestedJarFile(this.jarFile.getEntry("nested.jar"))) {
 			try (InputStream input = JarURLConnection.get(url, nested).getInputStream()) {
 				assertThat(input).hasBinaryContent(new byte[] { 3 });
@@ -150,7 +151,7 @@ class JarURLConnectionTests {
 
 	@Test
 	void connectionToEntryWithSpaceNestedEntry() throws Exception {
-		URL url = new URL("jar:file:" + getRelativePath() + "!/space nested.jar!/3.dat");
+		URL url = Urls.create("jar:file:" + getRelativePath() + "!/space nested.jar!/3.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		JarURLConnection connection = JarURLConnection.get(url, this.jarFile);
 		try (InputStream input = connection.getInputStream()) {
 			assertThat(input).hasBinaryContent(new byte[] { 3 });
@@ -160,7 +161,7 @@ class JarURLConnectionTests {
 
 	@Test
 	void connectionToEntryWithEncodedSpaceNestedEntry() throws Exception {
-		URL url = new URL("jar:file:" + getRelativePath() + "!/space%20nested.jar!/3.dat");
+		URL url = Urls.create("jar:file:" + getRelativePath() + "!/space%20nested.jar!/3.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		JarURLConnection connection = JarURLConnection.get(url, this.jarFile);
 		try (InputStream input = connection.getInputStream()) {
 			assertThat(input).hasBinaryContent(new byte[] { 3 });
@@ -170,7 +171,7 @@ class JarURLConnectionTests {
 
 	@Test
 	void connectionToEntryUsingWrongAbsoluteUrlForEntryFromNestedJarFile() throws Exception {
-		URL url = new URL("jar:" + this.rootJarFile.toURI().toURL() + "!/w.jar!/3.dat");
+		URL url = Urls.create("jar:" + this.rootJarFile.toURI().toURL() + "!/w.jar!/3.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		try (JarFile nested = this.jarFile.getNestedJarFile(this.jarFile.getEntry("nested.jar"))) {
 			assertThatExceptionOfType(FileNotFoundException.class)
 				.isThrownBy(JarURLConnection.get(url, nested)::getInputStream);
@@ -179,7 +180,7 @@ class JarURLConnectionTests {
 
 	@Test
 	void getContentLengthReturnsLengthOfUnderlyingEntry() throws Exception {
-		URL url = new URL("jar:" + this.rootJarFile.toURI().toURL() + "!/nested.jar!/3.dat");
+		URL url = Urls.create("jar:" + this.rootJarFile.toURI().toURL() + "!/nested.jar!/3.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		try (JarFile nested = this.jarFile.getNestedJarFile(this.jarFile.getEntry("nested.jar"))) {
 			JarURLConnection connection = JarURLConnection.get(url, nested);
 			assertThat(connection.getContentLength()).isOne();
@@ -188,7 +189,7 @@ class JarURLConnectionTests {
 
 	@Test
 	void getContentLengthLongReturnsLengthOfUnderlyingEntry() throws Exception {
-		URL url = new URL("jar:" + this.rootJarFile.toURI().toURL() + "!/nested.jar!/3.dat");
+		URL url = Urls.create("jar:" + this.rootJarFile.toURI().toURL() + "!/nested.jar!/3.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		try (JarFile nested = this.jarFile.getNestedJarFile(this.jarFile.getEntry("nested.jar"))) {
 			JarURLConnection connection = JarURLConnection.get(url, nested);
 			assertThat(connection.getContentLengthLong()).isOne();
@@ -197,14 +198,14 @@ class JarURLConnectionTests {
 
 	@Test
 	void getLastModifiedReturnsLastModifiedTimeOfJarEntry() throws Exception {
-		URL url = new URL("jar:" + this.rootJarFile.toURI().toURL() + "!/1.dat");
+		URL url = Urls.create("jar:" + this.rootJarFile.toURI().toURL() + "!/1.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		JarURLConnection connection = JarURLConnection.get(url, this.jarFile);
 		assertThat(connection.getLastModified()).isEqualTo(connection.getJarEntry().getTime());
 	}
 
 	@Test
 	void entriesCanBeStreamedFromJarFileOfConnection() throws Exception {
-		URL url = new URL("jar:" + this.rootJarFile.toURI().toURL() + "!/");
+		URL url = Urls.create("jar:" + this.rootJarFile.toURI().toURL() + "!/", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		JarURLConnection connection = JarURLConnection.get(url, this.jarFile);
 		List<String> entryNames = connection.getJarFile().stream().map(JarEntry::getName).toList();
 		assertThat(entryNames).hasSize(12);
@@ -232,7 +233,7 @@ class JarURLConnectionTests {
 
 	@Test
 	void openConnectionCanBeClosedWithoutClosingSourceJar() throws Exception {
-		URL url = new URL("jar:" + this.rootJarFile.toURI().toURL() + "!/");
+		URL url = Urls.create("jar:" + this.rootJarFile.toURI().toURL() + "!/", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		JarURLConnection connection = JarURLConnection.get(url, this.jarFile);
 		java.util.jar.JarFile connectionJarFile = connection.getJarFile();
 		connectionJarFile.close();

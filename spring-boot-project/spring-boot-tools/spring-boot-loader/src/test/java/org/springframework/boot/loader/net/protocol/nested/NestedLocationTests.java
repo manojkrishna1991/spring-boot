@@ -16,6 +16,8 @@
 
 package org.springframework.boot.loader.net.protocol.nested;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
@@ -87,7 +89,7 @@ class NestedLocationTests {
 	@Test
 	void fromUrlWhenNoSeparator() throws Exception {
 		File file = new File(this.temp, "test.jar");
-		NestedLocation location = NestedLocation.fromUrl(new URL("nested:" + file.getAbsolutePath() + "/"));
+		NestedLocation location = NestedLocation.fromUrl(Urls.create("nested:" + file.getAbsolutePath() + "/", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
 		assertThat(location.path()).isEqualTo(file.toPath());
 		assertThat(location.nestedEntryName()).isNull();
 	}
@@ -96,7 +98,7 @@ class NestedLocationTests {
 	void fromUrlReturnsNestedLocation() throws Exception {
 		File file = new File(this.temp, "test.jar");
 		NestedLocation location = NestedLocation
-			.fromUrl(new URL("nested:" + file.getAbsolutePath() + "/!lib/nested.jar"));
+			.fromUrl(Urls.create("nested:" + file.getAbsolutePath() + "/!lib/nested.jar", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
 		assertThat(location.path()).isEqualTo(file.toPath());
 		assertThat(location.nestedEntryName()).isEqualTo("lib/nested.jar");
 	}

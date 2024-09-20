@@ -16,6 +16,8 @@
 
 package org.springframework.boot.web.embedded.undertow;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -50,7 +52,7 @@ class JarResourceManager implements ResourceManager {
 
 	@Override
 	public Resource getResource(String path) throws IOException {
-		URL url = new URL("jar:" + this.jarPath + "!" + (path.startsWith("/") ? path : "/" + path));
+		URL url = Urls.create("jar:" + this.jarPath + "!" + (path.startsWith("/") ? path : "/" + path), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		URLResource resource = new URLResource(url, path);
 		if (StringUtils.hasText(path) && !"/".equals(path) && resource.getContentLength() < 0) {
 			return null;

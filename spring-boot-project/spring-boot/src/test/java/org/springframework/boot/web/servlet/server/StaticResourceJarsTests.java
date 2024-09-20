@@ -16,6 +16,8 @@
 
 package org.springframework.boot.web.servlet.server;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -86,7 +88,7 @@ class StaticResourceJarsTests {
 	void ignoreWildcardUrls() throws Exception {
 		File jarFile = createResourcesJar("test-resources.jar");
 		URL folderUrl = jarFile.getParentFile().toURI().toURL();
-		URL wildcardUrl = new URL(folderUrl + "*.jar");
+		URL wildcardUrl = Urls.create(folderUrl + "*.jar", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		List<URL> staticResourceJarUrls = new StaticResourceJars().getUrlsFrom(wildcardUrl);
 		assertThat(staticResourceJarUrls).isEmpty();
 	}
@@ -95,7 +97,7 @@ class StaticResourceJarsTests {
 	void doesNotCloseJarFromCachedConnection() throws Exception {
 		File jarFile = createResourcesJar("test-resources.jar");
 		TrackedURLStreamHandler handler = new TrackedURLStreamHandler(true);
-		URL url = new URL("jar", null, 0, jarFile.toURI().toURL().toString() + "!/", handler);
+		URL url = Urls.create("jar", null, 0, jarFile.toURI().toURL().toString() + "!/", handler, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		try {
 			new StaticResourceJars().getUrlsFrom(url);
 			assertThatNoException()
@@ -110,7 +112,7 @@ class StaticResourceJarsTests {
 	void closesJarFromNonCachedConnection() throws Exception {
 		File jarFile = createResourcesJar("test-resources.jar");
 		TrackedURLStreamHandler handler = new TrackedURLStreamHandler(false);
-		URL url = new URL("jar", null, 0, jarFile.toURI().toURL().toString() + "!/", handler);
+		URL url = Urls.create("jar", null, 0, jarFile.toURI().toURL().toString() + "!/", handler, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		new StaticResourceJars().getUrlsFrom(url);
 		assertThatIllegalStateException()
 			.isThrownBy(() -> ((JarURLConnection) handler.getConnection()).getJarFile().getComment())
@@ -156,7 +158,7 @@ class StaticResourceJarsTests {
 
 		@Override
 		protected URLConnection openConnection(URL u) throws IOException {
-			this.connection = new URL(u.toExternalForm()).openConnection();
+			this.connection = Urls.create(u.toExternalForm(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openConnection();
 			this.connection.setUseCaches(this.useCaches);
 			return this.connection;
 		}

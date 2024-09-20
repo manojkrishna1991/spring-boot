@@ -16,6 +16,8 @@
 
 package org.springframework.boot.loader.jar;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -51,14 +53,14 @@ final class JarURLConnection extends java.net.JarURLConnection {
 
 	static {
 		try {
-			EMPTY_JAR_URL = new URL("jar:", null, 0, "file:!/", new URLStreamHandler() {
+			EMPTY_JAR_URL = Urls.create("jar:", null, 0, "file:!/", new URLStreamHandler() {
 				@Override
 				protected URLConnection openConnection(URL u) throws IOException {
 					// Stub URLStreamHandler to prevent the wrong JAR Handler from being
 					// Instantiated and cached.
 					return null;
 				}
-			});
+			}, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		}
 		catch (MalformedURLException ex) {
 			throw new IllegalStateException(ex);
@@ -125,9 +127,9 @@ final class JarURLConnection extends java.net.JarURLConnection {
 				spec = spec.substring(0, spec.length() - SEPARATOR.length());
 			}
 			if (!spec.contains(SEPARATOR)) {
-				return new URL(spec);
+				return Urls.create(spec, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 			}
-			return new URL("jar:" + spec);
+			return Urls.create("jar:" + spec, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		}
 		catch (MalformedURLException ex) {
 			throw new IllegalStateException(ex);

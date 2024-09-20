@@ -16,6 +16,8 @@
 
 package org.springframework.boot.loader.net.protocol.jar;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -71,7 +73,7 @@ public final class JarUrl {
 	public static URL create(File file, String nestedEntryName, String path) {
 		try {
 			path = (path != null) ? path : "";
-			return new URL(null, "jar:" + getJarReference(file, nestedEntryName) + "!/" + path, Handler.INSTANCE);
+			return Urls.create(null, "jar:" + getJarReference(file, nestedEntryName) + "!/" + path, Handler.INSTANCE, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		}
 		catch (MalformedURLException ex) {
 			throw new IllegalStateException("Unable to create JarFileArchive URL", ex);

@@ -16,6 +16,8 @@
 
 package org.springframework.boot.loader.net.protocol.jar;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -171,7 +173,7 @@ class JarUrlConnectionTests {
 			out.closeEntry();
 		}
 		JarUrlConnection connection = JarUrlConnection
-			.open(new URL("jar:file:" + this.file.getAbsolutePath() + "!/test.dat"));
+			.open(Urls.create("jar:file:" + this.file.getAbsolutePath() + "!/test.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
 		assertThat(connection.getContentType()).isEqualTo("application/xml");
 	}
 
@@ -184,7 +186,7 @@ class JarUrlConnectionTests {
 			out.closeEntry();
 		}
 		JarUrlConnection connection = JarUrlConnection
-			.open(new URL("jar:file:" + this.file.getAbsolutePath() + "!/test.xml"));
+			.open(Urls.create("jar:file:" + this.file.getAbsolutePath() + "!/test.xml", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
 		assertThat(connection.getContentType()).isEqualTo("application/xml");
 	}
 
@@ -197,7 +199,7 @@ class JarUrlConnectionTests {
 			out.closeEntry();
 		}
 		JarUrlConnection connection = JarUrlConnection
-			.open(new URL("jar:file:" + this.file.getAbsolutePath() + "!/test.dat"));
+			.open(Urls.create("jar:file:" + this.file.getAbsolutePath() + "!/test.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
 		assertThat(connection.getContentType()).isEqualTo("content/unknown");
 	}
 
@@ -219,7 +221,7 @@ class JarUrlConnectionTests {
 			out.closeEntry();
 		}
 		JarUrlConnection connection = JarUrlConnection
-			.open(new URL("jar:file:" + this.file.getAbsolutePath() + "!/test.txt"));
+			.open(Urls.create("jar:file:" + this.file.getAbsolutePath() + "!/test.txt", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
 		assertThat(connection.getContent()).isInstanceOf(FilterInputStream.class);
 	}
 

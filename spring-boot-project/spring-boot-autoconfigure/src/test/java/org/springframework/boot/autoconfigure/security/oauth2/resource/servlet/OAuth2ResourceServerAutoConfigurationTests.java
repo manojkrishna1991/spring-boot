@@ -16,6 +16,8 @@
 
 package org.springframework.boot.autoconfigure.security.oauth2.resource.servlet;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.net.URI;
 import java.net.URL;
 import java.time.Instant;
@@ -614,7 +616,7 @@ class OAuth2ResourceServerAutoConfigurationTests {
 				JwtDecoder jwtDecoder = context.getBean(JwtDecoder.class);
 				DelegatingOAuth2TokenValidator<Jwt> jwtValidator = (DelegatingOAuth2TokenValidator<Jwt>) ReflectionTestUtils
 					.getField(jwtDecoder, "jwtValidator");
-				Jwt jwt = jwt().claim("iss", new URL(issuerUri))
+				Jwt jwt = jwt().claim("iss", Urls.create(issuerUri, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS))
 					.claim("aud", Collections.singletonList("https://other-audience.com"))
 					.build();
 				assertThat(jwtValidator.validate(jwt).hasErrors()).isTrue();

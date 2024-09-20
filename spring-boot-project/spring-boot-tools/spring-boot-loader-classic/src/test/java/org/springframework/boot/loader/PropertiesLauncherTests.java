@@ -16,6 +16,8 @@
 
 package org.springframework.boot.loader;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -397,7 +399,7 @@ class PropertiesLauncherTests {
 				.getContextClassLoader();
 			classLoader.close();
 		}
-		URL resource = new URL("jar:" + jarFile.toURI() + "!/nested.jar!/3.dat");
+		URL resource = Urls.create("jar:" + jarFile.toURI() + "!/nested.jar!/3.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		byte[] bytes = FileCopyUtils.copyToByteArray(resource.openStream());
 		assertThat(bytes).isNotEmpty();
 	}
