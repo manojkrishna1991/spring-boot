@@ -16,6 +16,7 @@
 
 package org.springframework.boot.gradle.tasks.bundling;
 
+import io.github.pixee.security.ZipSecurity;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -58,8 +59,7 @@ class LoaderZipEntries {
 
 	WrittenEntries writeTo(ZipArchiveOutputStream out) throws IOException {
 		WrittenEntries written = new WrittenEntries();
-		try (ZipInputStream loaderJar = new ZipInputStream(
-				getClass().getResourceAsStream("/" + this.loaderImplementation.getJarResourceName()))) {
+		try (ZipInputStream loaderJar = ZipSecurity.createHardenedInputStream(getClass().getResourceAsStream("/" + this.loaderImplementation.getJarResourceName()))) {
 			java.util.zip.ZipEntry entry = loaderJar.getNextEntry();
 			while (entry != null) {
 				if (entry.isDirectory() && !entry.getName().equals("META-INF/")) {
