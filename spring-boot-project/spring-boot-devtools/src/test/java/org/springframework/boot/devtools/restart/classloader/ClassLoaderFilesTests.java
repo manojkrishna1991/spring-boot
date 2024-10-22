@@ -16,6 +16,7 @@
 
 package org.springframework.boot.devtools.restart.classloader;
 
+import io.github.pixee.security.ObjectInputFilters;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -118,6 +119,7 @@ class ClassLoaderFilesTests {
 		oos.writeObject(this.files);
 		oos.close();
 		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
+		ObjectInputFilters.enableObjectFilterIfUnprotected(ois);
 		ClassLoaderFiles readObject = (ClassLoaderFiles) ois.readObject();
 		assertThat(readObject.getFile("myfile")).isNotNull();
 	}

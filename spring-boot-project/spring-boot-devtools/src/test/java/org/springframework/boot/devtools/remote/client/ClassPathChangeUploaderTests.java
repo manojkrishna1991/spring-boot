@@ -16,6 +16,7 @@
 
 package org.springframework.boot.devtools.remote.client;
 
+import io.github.pixee.security.ObjectInputFilters;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -150,6 +151,7 @@ class ClassPathChangeUploaderTests {
 
 	private ClassLoaderFiles deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
 		ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(bytes));
+		ObjectInputFilters.enableObjectFilterIfUnprotected(objectInputStream);
 		return (ClassLoaderFiles) objectInputStream.readObject();
 	}
 
