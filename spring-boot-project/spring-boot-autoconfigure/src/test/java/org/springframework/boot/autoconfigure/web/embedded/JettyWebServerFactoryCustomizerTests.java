@@ -18,6 +18,7 @@ package org.springframework.boot.autoconfigure.web.embedded;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -116,7 +117,7 @@ class JettyWebServerFactoryCustomizerTests {
 
 	@Test
 	void accessLogCanBeCustomized() throws IOException {
-		File logFile = File.createTempFile("jetty_log", ".log");
+		File logFile = Files.createTempFile("jetty_log", ".log").toFile();
 		bind("server.jetty.accesslog.enabled=true", "server.jetty.accesslog.format=extended_ncsa",
 				"server.jetty.accesslog.filename=" + logFile.getAbsolutePath().replace("\\", "\\\\"),
 				"server.jetty.accesslog.file-date-format=yyyy-MM-dd", "server.jetty.accesslog.retention-period=42",

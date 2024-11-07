@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -176,7 +177,7 @@ class ImageBuildpackTests extends AbstractJsonTests {
 	private Object withMockLayers(InvocationOnMock invocation) {
 		try {
 			IOBiConsumer<String, Path> consumer = invocation.getArgument(1);
-			File tarFile = File.createTempFile("create-builder-test-", null);
+			File tarFile = Files.createTempFile("create-builder-test-", null).toFile();
 			FileOutputStream out = new FileOutputStream(tarFile);
 			try (TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out)) {
 				tarOut.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
