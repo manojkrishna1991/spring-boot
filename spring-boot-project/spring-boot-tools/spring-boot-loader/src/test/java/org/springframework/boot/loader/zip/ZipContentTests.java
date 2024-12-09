@@ -29,6 +29,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Iterator;
 import java.util.Random;
@@ -286,7 +287,7 @@ class ZipContentTests {
 		CRC32 crc32 = new CRC32();
 		try (FileOutputStream entryOut = new FileOutputStream(entryFile)) {
 			byte[] data = new byte[1024 * 1024];
-			new Random().nextBytes(data);
+			new SecureRandom().nextBytes(data);
 			for (int i = 0; i < 1024; i++) {
 				entryOut.write(data);
 				crc32.update(data);

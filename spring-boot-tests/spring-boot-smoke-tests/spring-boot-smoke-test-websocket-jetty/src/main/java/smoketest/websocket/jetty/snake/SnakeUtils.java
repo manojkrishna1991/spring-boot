@@ -17,6 +17,7 @@
 package smoketest.websocket.jetty.snake;
 
 import java.awt.Color;
+import java.security.SecureRandom;
 import java.util.Random;
 
 public final class SnakeUtils {
@@ -36,7 +37,7 @@ public final class SnakeUtils {
 	 */
 	public static final int GRID_SIZE = 10;
 
-	private static final Random random = new Random();
+	private static final Random random = new SecureRandom();
 
 	private SnakeUtils() {
 	}

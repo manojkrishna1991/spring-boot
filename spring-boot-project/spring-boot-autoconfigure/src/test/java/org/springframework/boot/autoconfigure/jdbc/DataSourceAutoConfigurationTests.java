@@ -18,6 +18,7 @@ package org.springframework.boot.autoconfigure.jdbc;
 
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverPropertyInfo;
@@ -69,7 +70,7 @@ class DataSourceAutoConfigurationTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
 		.withConfiguration(AutoConfigurations.of(DataSourceAutoConfiguration.class))
-		.withPropertyValues("spring.datasource.url:jdbc:hsqldb:mem:testdb-" + new Random().nextInt());
+		.withPropertyValues("spring.datasource.url:jdbc:hsqldb:mem:testdb-" + new SecureRandom().nextInt());
 
 	@Test
 	void testDefaultDataSourceExists() {

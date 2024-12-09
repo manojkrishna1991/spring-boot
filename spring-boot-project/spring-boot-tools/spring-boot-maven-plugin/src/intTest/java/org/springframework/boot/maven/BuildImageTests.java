@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.SecureRandom;
 import java.time.OffsetDateTime;
 import java.util.Random;
 import java.util.stream.IntStream;
@@ -541,7 +542,7 @@ class BuildImageTests extends AbstractArchiveIntegrationTests {
 
 	private void writeLongNameResource(File project) {
 		StringBuilder name = new StringBuilder();
-		new Random().ints('a', 'z' + 1).limit(128).forEach((i) -> name.append((char) i));
+		new SecureRandom().ints('a', 'z' + 1).limit(128).forEach((i) -> name.append((char) i));
 		try {
 			Path path = project.toPath().resolve(Paths.get("src", "main", "resources", name.toString()));
 			Files.createDirectories(path.getParent());
@@ -570,7 +571,7 @@ class BuildImageTests extends AbstractArchiveIntegrationTests {
 	}
 
 	private String randomString() {
-		IntStream chars = new Random().ints('a', 'z' + 1).limit(10);
+		IntStream chars = new SecureRandom().ints('a', 'z' + 1).limit(10);
 		return chars.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
 	}
 

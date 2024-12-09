@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -565,7 +566,7 @@ abstract class AbstractPackagerTests<P extends Packager> {
 			}
 		};
 		byte[] data = new byte[1024 * 1024];
-		new Random().nextBytes(data);
+		new SecureRandom().nextBytes(data);
 		ZipEntry entry = new ZipEntry("entry.dat");
 		output.putNextEntry(entry);
 		output.write(data);

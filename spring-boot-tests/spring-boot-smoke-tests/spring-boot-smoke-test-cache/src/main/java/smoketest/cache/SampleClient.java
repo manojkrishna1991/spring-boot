@@ -16,6 +16,7 @@
 
 package smoketest.cache;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -50,7 +51,7 @@ class SampleClient {
 
 	SampleClient(CountryRepository countryService) {
 		this.countryService = countryService;
-		this.random = new Random();
+		this.random = new SecureRandom();
 	}
 
 	@Scheduled(fixedDelay = 500)

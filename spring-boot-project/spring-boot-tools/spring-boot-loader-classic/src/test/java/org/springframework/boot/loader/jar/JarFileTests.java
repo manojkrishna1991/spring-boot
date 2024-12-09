@@ -30,6 +30,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -588,7 +589,7 @@ class JarFileTests {
 		CRC32 crc32 = new CRC32();
 		try (FileOutputStream entryOut = new FileOutputStream(entry)) {
 			byte[] data = new byte[1024 * 1024];
-			new Random().nextBytes(data);
+			new SecureRandom().nextBytes(data);
 			for (int i = 0; i < 1024; i++) {
 				entryOut.write(data);
 				crc32.update(data);

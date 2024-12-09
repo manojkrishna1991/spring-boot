@@ -16,6 +16,7 @@
 
 package org.springframework.boot.buildpack.platform.docker.type;
 
+import java.security.SecureRandom;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -28,7 +29,7 @@ import org.springframework.util.Assert;
  */
 final class RandomString {
 
-	private static final Random random = new Random();
+	private static final Random random = new SecureRandom();
 
 	private RandomString() {
 	}

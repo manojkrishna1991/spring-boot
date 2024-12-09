@@ -16,6 +16,7 @@
 
 package smoketest.tomcat.util;
 
+import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Random;
 
@@ -26,7 +27,7 @@ public final class RandomStringUtil {
 
 	public static String getRandomBase64EncodedString(int length) {
 		byte[] responseHeader = new byte[length];
-		new Random().nextBytes(responseHeader);
+		new SecureRandom().nextBytes(responseHeader);
 		return Base64.getEncoder().encodeToString(responseHeader);
 	}
 

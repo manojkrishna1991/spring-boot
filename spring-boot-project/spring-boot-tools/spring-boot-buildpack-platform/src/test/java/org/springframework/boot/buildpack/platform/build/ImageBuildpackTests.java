@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -61,7 +62,7 @@ class ImageBuildpackTests extends AbstractJsonTests {
 	@BeforeEach
 	void setUp() {
 		StringBuilder path = new StringBuilder();
-		new Random().ints('a', 'z' + 1).limit(100).forEach((i) -> path.append((char) i));
+		new SecureRandom().ints('a', 'z' + 1).limit(100).forEach((i) -> path.append((char) i));
 		this.longFilePath = path.toString();
 	}
 

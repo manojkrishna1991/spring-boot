@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.security.SecureRandom;
 import java.time.OffsetDateTime;
 import java.util.Random;
 import java.util.Set;
@@ -461,7 +462,7 @@ class BootBuildImageIntegrationTests {
 
 	private void writeLongNameResource() throws IOException {
 		StringBuilder name = new StringBuilder();
-		new Random().ints('a', 'z' + 1).limit(128).forEach((i) -> name.append((char) i));
+		new SecureRandom().ints('a', 'z' + 1).limit(128).forEach((i) -> name.append((char) i));
 		Path path = this.gradleBuild.getProjectDir()
 			.toPath()
 			.resolve(Paths.get("src", "main", "resources", name.toString()));

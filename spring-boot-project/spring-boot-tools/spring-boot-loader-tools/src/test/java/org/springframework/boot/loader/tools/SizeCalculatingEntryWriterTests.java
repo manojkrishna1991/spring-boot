@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.SecureRandom;
 import java.util.Random;
 
 import org.junit.jupiter.api.Test;
@@ -64,7 +65,7 @@ class SizeCalculatingEntryWriterTests {
 
 		TestEntryWriter(int size) {
 			this.bytes = new byte[size];
-			new Random().nextBytes(this.bytes);
+			new SecureRandom().nextBytes(this.bytes);
 		}
 
 		byte[] getBytes() {

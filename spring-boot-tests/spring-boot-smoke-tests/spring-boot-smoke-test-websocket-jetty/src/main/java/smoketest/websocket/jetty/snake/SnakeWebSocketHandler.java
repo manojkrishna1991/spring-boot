@@ -17,6 +17,7 @@
 package smoketest.websocket.jetty.snake;
 
 import java.awt.Color;
+import java.security.SecureRandom;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,7 +31,7 @@ public class SnakeWebSocketHandler extends TextWebSocketHandler {
 
 	private static final AtomicInteger snakeIds = new AtomicInteger();
 
-	private static final Random random = new Random();
+	private static final Random random = new SecureRandom();
 
 	private final int id;
 
