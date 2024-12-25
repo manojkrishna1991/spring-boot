@@ -16,6 +16,8 @@
 
 package org.springframework.boot.web.embedded.undertow;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -395,7 +397,7 @@ public class UndertowServletWebServerFactory extends AbstractServletWebServerFac
 				try {
 					File file = new File(url.toURI());
 					if (file.isFile()) {
-						resourceJarUrls.add(new URL("jar:" + url + "!/"));
+						resourceJarUrls.add(Urls.create("jar:" + url + "!/", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
 					}
 					else {
 						managers.add(new FileResourceManager(new File(file, "META-INF/resources"), 0));
@@ -555,7 +557,7 @@ public class UndertowServletWebServerFactory extends AbstractServletWebServerFac
 		private URLResource getMetaInfResource(URL resourceJar, String path) {
 			try {
 				String urlPath = URLEncoder.encode(ENCODED_SLASH.matcher(path).replaceAll("/"), StandardCharsets.UTF_8);
-				URL resourceUrl = new URL(resourceJar + "META-INF/resources" + urlPath);
+				URL resourceUrl = Urls.create(resourceJar + "META-INF/resources" + urlPath, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 				URLResource resource = new URLResource(resourceUrl, path);
 				if (resource.getContentLength() < 0) {
 					return null;

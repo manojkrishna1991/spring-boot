@@ -16,6 +16,8 @@
 
 package org.springframework.boot.devtools.restart;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -155,12 +157,12 @@ final class ChangeableUrls implements Iterable<URL> {
 		List<URL> nonExistentEntries = new ArrayList<>();
 		for (String entry : entries) {
 			try {
-				URL referenced = new URL(jarUrl, entry);
+				URL referenced = Urls.create(jarUrl, entry, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 				if (new File(referenced.getFile()).exists()) {
 					urls.add(referenced);
 				}
 				else {
-					referenced = new URL(jarUrl, URLDecoder.decode(entry, StandardCharsets.UTF_8));
+					referenced = Urls.create(jarUrl, URLDecoder.decode(entry, StandardCharsets.UTF_8), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 					if (new File(referenced.getFile()).exists()) {
 						urls.add(referenced);
 					}

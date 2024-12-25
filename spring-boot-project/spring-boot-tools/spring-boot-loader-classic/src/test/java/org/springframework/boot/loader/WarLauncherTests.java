@@ -16,6 +16,8 @@
 
 package org.springframework.boot.loader;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -61,10 +63,10 @@ class WarLauncherTests extends AbstractExecutableArchiveLauncherTests {
 			List<Archive> classPathArchives = new ArrayList<>();
 			launcher.getClassPathArchivesIterator().forEachRemaining(classPathArchives::add);
 			assertThat(getUrls(classPathArchives)).containsOnly(
-					new URL("jar:" + jarRoot.toURI().toURL() + "!/WEB-INF/classes!/"),
-					new URL("jar:" + jarRoot.toURI().toURL() + "!/WEB-INF/lib/foo.jar!/"),
-					new URL("jar:" + jarRoot.toURI().toURL() + "!/WEB-INF/lib/bar.jar!/"),
-					new URL("jar:" + jarRoot.toURI().toURL() + "!/WEB-INF/lib/baz.jar!/"));
+					Urls.create("jar:" + jarRoot.toURI().toURL() + "!/WEB-INF/classes!/", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS),
+					Urls.create("jar:" + jarRoot.toURI().toURL() + "!/WEB-INF/lib/foo.jar!/", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS),
+					Urls.create("jar:" + jarRoot.toURI().toURL() + "!/WEB-INF/lib/bar.jar!/", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS),
+					Urls.create("jar:" + jarRoot.toURI().toURL() + "!/WEB-INF/lib/baz.jar!/", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
 			for (Archive classPathArchive : classPathArchives) {
 				classPathArchive.close();
 			}

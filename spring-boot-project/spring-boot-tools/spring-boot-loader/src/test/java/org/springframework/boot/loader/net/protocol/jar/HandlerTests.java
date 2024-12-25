@@ -16,6 +16,8 @@
 
 package org.springframework.boot.loader.net.protocol.jar;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -206,7 +208,7 @@ class HandlerTests {
 	}
 
 	private URL createJarUrl(String file) throws MalformedURLException {
-		return new URL("jar", null, -1, file, this.handler);
+		return Urls.create("jar", null, -1, file, this.handler, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 	}
 
 }

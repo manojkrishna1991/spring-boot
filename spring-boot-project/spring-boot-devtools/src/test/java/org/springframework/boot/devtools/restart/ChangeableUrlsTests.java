@@ -16,6 +16,8 @@
 
 package org.springframework.boot.devtools.restart;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -95,9 +97,9 @@ class ChangeableUrlsTests {
 		ChangeableUrls urls = ChangeableUrls.fromClassLoader(
 				new URLClassLoader(new URL[] { jarWithClassPath.toURI().toURL(), makeJarFileWithNoManifest() }));
 		assertThat(urls.toList()).containsExactly(
-				new URL(jarWithClassPath.toURI().toURL(), "project-core/target/classes/"),
-				new URL(jarWithClassPath.toURI().toURL(), "project-web/target/classes/"),
-				new URL(jarWithClassPath.toURI().toURL(), "project space/target/classes/"), relative.toURI().toURL(),
+				Urls.create(jarWithClassPath.toURI().toURL(), "project-core/target/classes/", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS),
+				Urls.create(jarWithClassPath.toURI().toURL(), "project-web/target/classes/", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS),
+				Urls.create(jarWithClassPath.toURI().toURL(), "project space/target/classes/", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS), relative.toURI().toURL(),
 				absoluteUrl);
 	}
 

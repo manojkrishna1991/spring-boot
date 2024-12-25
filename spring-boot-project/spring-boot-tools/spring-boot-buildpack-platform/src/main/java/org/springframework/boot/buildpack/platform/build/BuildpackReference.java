@@ -16,6 +16,8 @@
 
 package org.springframework.boot.buildpack.platform.build;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -49,7 +51,7 @@ public final class BuildpackReference {
 
 	Path asPath() {
 		try {
-			URL url = new URL(this.value);
+			URL url = Urls.create(this.value, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 			if (url.getProtocol().equals("file")) {
 				return Paths.get(url.getPath());
 			}

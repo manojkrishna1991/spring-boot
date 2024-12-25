@@ -16,6 +16,8 @@
 
 package org.springframework.boot.web.embedded.tomcat;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -51,7 +53,7 @@ class TomcatEmbeddedWebappClassLoaderTests {
 	void getResourceFindsResourceFromParentClassLoader() throws Exception {
 		File war = createWar();
 		withWebappClassLoader(war, (classLoader) -> assertThat(classLoader.getResource("test.txt"))
-			.isEqualTo(new URL(webInfClassesUrlString(war) + "test.txt")));
+			.isEqualTo(Urls.create(webInfClassesUrlString(war) + "test.txt", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS)));
 	}
 
 	@Test
@@ -60,12 +62,12 @@ class TomcatEmbeddedWebappClassLoaderTests {
 		withWebappClassLoader(warFile, (classLoader) -> {
 			List<URL> urls = new ArrayList<>();
 			CollectionUtils.toIterator(classLoader.getResources("test.txt")).forEachRemaining(urls::add);
-			assertThat(urls).containsExactly(new URL(webInfClassesUrlString(warFile) + "test.txt"));
+			assertThat(urls).containsExactly(Urls.create(webInfClassesUrlString(warFile) + "test.txt", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
 		});
 	}
 
 	private void withWebappClassLoader(File war, ClassLoaderConsumer consumer) throws Exception {
-		URLClassLoader parent = new URLClassLoader(new URL[] { new URL(webInfClassesUrlString(war)) }, null);
+		URLClassLoader parent = new URLClassLoader(new URL[] { Urls.create(webInfClassesUrlString(war), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS) }, null);
 		try (ParallelWebappClassLoader classLoader = new TomcatEmbeddedWebappClassLoader(parent)) {
 			StandardContext context = new StandardContext();
 			context.setName("test");

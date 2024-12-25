@@ -16,6 +16,8 @@
 
 package org.springframework.boot.loader.jar;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -120,7 +122,7 @@ class JarFileTests {
 		assertThat(entries.nextElement().getName()).isEqualTo("space nested.jar");
 		assertThat(entries.nextElement().getName()).isEqualTo("multi-release.jar");
 		assertThat(entries.hasMoreElements()).isFalse();
-		URL jarUrl = new URL("jar:" + this.rootJarFile.toURI() + "!/");
+		URL jarUrl = Urls.create("jar:" + this.rootJarFile.toURI() + "!/", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		URLClassLoader urlClassLoader = new URLClassLoader(new URL[] { jarUrl });
 		assertThat(urlClassLoader.getResource("special/\u00EB.dat")).isNotNull();
 		assertThat(urlClassLoader.getResource("d/9.dat")).isNotNull();
@@ -261,7 +263,7 @@ class JarFileTests {
 
 	@Test
 	void createEntryUrl() throws Exception {
-		URL url = new URL(this.jarFile.getUrl(), "1.dat");
+		URL url = Urls.create(this.jarFile.getUrl(), "1.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		assertThat(url).hasToString("jar:" + this.rootJarFile.toURI() + "!/1.dat");
 		JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
 		assertThat(JarFileWrapper.unwrap(jarURLConnection.getJarFile())).isSameAs(this.jarFile);
@@ -277,7 +279,7 @@ class JarFileTests {
 
 	@Test
 	void getMissingEntryUrl() throws Exception {
-		URL url = new URL(this.jarFile.getUrl(), "missing.dat");
+		URL url = Urls.create(this.jarFile.getUrl(), "missing.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		assertThat(url).hasToString("jar:" + this.rootJarFile.toURI() + "!/missing.dat");
 		assertThatExceptionOfType(FileNotFoundException.class)
 			.isThrownBy(((JarURLConnection) url.openConnection())::getJarEntry);
@@ -292,7 +294,7 @@ class JarFileTests {
 
 	@Test
 	void getEntryUrlStream() throws Exception {
-		URL url = new URL(this.jarFile.getUrl(), "1.dat");
+		URL url = Urls.create(this.jarFile.getUrl(), "1.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		url.openConnection();
 		try (InputStream stream = url.openStream()) {
 			assertThat(stream.read()).isOne();
@@ -368,7 +370,7 @@ class JarFileTests {
 	@Test
 	void createUrlFromString() throws Exception {
 		String spec = "jar:" + this.rootJarFile.toURI() + "!/nested.jar!/3.dat";
-		URL url = new URL(spec);
+		URL url = Urls.create(spec, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		assertThat(url).hasToString(spec);
 		JarURLConnection connection = (JarURLConnection) url.openConnection();
 		try (InputStream inputStream = connection.getInputStream()) {
@@ -393,7 +395,7 @@ class JarFileTests {
 
 	private void nonNestedJarFileFromString(String spec) throws Exception {
 		JarFile.registerUrlProtocolHandler();
-		URL url = new URL(spec);
+		URL url = Urls.create(spec, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		assertThat(url).hasToString(spec);
 		JarURLConnection connection = (JarURLConnection) url.openConnection();
 		try (InputStream inputStream = connection.getInputStream()) {
@@ -482,7 +484,7 @@ class JarFileTests {
 		// relates to gh-1070
 		try (JarFile nestedJarFile = this.jarFile.getNestedJarFile(this.jarFile.getEntry("nested.jar"))) {
 			URL nestedUrl = nestedJarFile.getUrl();
-			URL url = new URL(nestedUrl, nestedJarFile.getUrl() + "missing.jar!/3.dat");
+			URL url = Urls.create(nestedUrl, nestedJarFile.getUrl() + "missing.jar!/3.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 			assertThatExceptionOfType(FileNotFoundException.class).isThrownBy(url.openConnection()::getInputStream);
 		}
 	}
@@ -541,11 +543,11 @@ class JarFileTests {
 		try {
 			try (JarFile nested = this.jarFile.getNestedJarFile(this.jarFile.getEntry("nested.jar"))) {
 				URL context = nested.getUrl();
-				new URL(context, "jar:" + this.rootJarFile.toURI() + "!/nested.jar!/3.dat").openConnection()
+				Urls.create(context, "jar:" + this.rootJarFile.toURI() + "!/nested.jar!/3.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openConnection()
 					.getInputStream()
 					.close();
 				assertThatExceptionOfType(FileNotFoundException.class)
-					.isThrownBy(new URL(context, "jar:" + this.rootJarFile.toURI() + "!/no.dat")
+					.isThrownBy(Urls.create(context, "jar:" + this.rootJarFile.toURI() + "!/no.dat", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS)
 						.openConnection()::getInputStream);
 			}
 		}

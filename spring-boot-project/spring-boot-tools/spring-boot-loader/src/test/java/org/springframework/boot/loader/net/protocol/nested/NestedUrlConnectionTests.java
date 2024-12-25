@@ -16,6 +16,8 @@
 
 package org.springframework.boot.loader.net.protocol.nested;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.io.FilePermission;
 import java.io.IOException;
@@ -69,7 +71,7 @@ class NestedUrlConnectionTests {
 	void setup() throws Exception {
 		this.jarFile = new File(this.temp, "test.jar");
 		TestJar.create(this.jarFile);
-		this.url = new URL("nested:" + this.jarFile.getAbsolutePath() + "/!nested.jar");
+		this.url = Urls.create("nested:" + this.jarFile.getAbsolutePath() + "/!nested.jar", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 	}
 
 	@Test

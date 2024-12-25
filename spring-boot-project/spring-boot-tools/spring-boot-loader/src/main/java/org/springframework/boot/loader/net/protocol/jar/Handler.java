@@ -16,6 +16,8 @@
 
 package org.springframework.boot.loader.net.protocol.jar;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -109,7 +111,7 @@ public class Handler extends URLStreamHandler {
 			return;
 		}
 		try {
-			new URL(innerUrl);
+			Urls.create(innerUrl, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		}
 		catch (MalformedURLException ex) {
 			throw new IllegalStateException("invalid url: %s (%s)".formatted(spec, ex));
@@ -127,7 +129,7 @@ public class Handler extends URLStreamHandler {
 		}
 		String fileWithoutEntry = file.substring(0, indexOfSeparator);
 		try {
-			hash += new URL(fileWithoutEntry).hashCode();
+			hash += Urls.create(fileWithoutEntry, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).hashCode();
 		}
 		catch (MalformedURLException ex) {
 			hash += fileWithoutEntry.hashCode();
@@ -154,8 +156,8 @@ public class Handler extends URLStreamHandler {
 			return false;
 		}
 		try {
-			URL innerUrl1 = new URL(file1.substring(0, indexOfSeparator1));
-			URL innerUrl2 = new URL(file2.substring(0, indexOfSeparator2));
+			URL innerUrl1 = Urls.create(file1.substring(0, indexOfSeparator1), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
+			URL innerUrl2 = Urls.create(file2.substring(0, indexOfSeparator2), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 			if (!super.sameFile(innerUrl1, innerUrl2)) {
 				return false;
 			}

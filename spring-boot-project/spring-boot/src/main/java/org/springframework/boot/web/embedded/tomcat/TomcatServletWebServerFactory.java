@@ -16,6 +16,8 @@
 
 package org.springframework.boot.web.embedded.tomcat;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -826,7 +828,7 @@ public class TomcatServletWebServerFactory extends AbstractServletWebServerFacto
 					return;
 				}
 				WebResourceRoot root = this.context.getResources();
-				URL url = new URL(resource);
+				URL url = Urls.create(resource, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 				if (isInsideNestedJar(resource)) {
 					root.addJarResources(new NestedJarResourceSet(url, root, WEB_APP_MOUNT, INTERNAL_PATH));
 				}
@@ -843,7 +845,7 @@ public class TomcatServletWebServerFactory extends AbstractServletWebServerFacto
 			// It's a nested jar but we now don't want the suffix because Tomcat
 			// is going to try and locate it as a root URL (not the resource
 			// inside it)
-			URL url = new URL(resource.substring(0, resource.length() - 2));
+			URL url = Urls.create(resource.substring(0, resource.length() - 2), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 			this.context.getResources()
 				.createWebResourceSet(ResourceSetType.RESOURCE_JAR, WEB_APP_MOUNT, url, INTERNAL_PATH);
 		}

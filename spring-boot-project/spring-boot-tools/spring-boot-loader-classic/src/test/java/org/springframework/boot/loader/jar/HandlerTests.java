@@ -16,6 +16,8 @@
 
 package org.springframework.boot.loader.jar;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -160,12 +162,11 @@ class HandlerTests {
 	void fallbackToJdksJarUrlStreamHandler(@TempDir File tempDir) throws Exception {
 		File testJar = new File(tempDir, "test.jar");
 		TestJarCreator.createTestJar(testJar);
-		URLConnection connection = new URL(null, "jar:" + testJar.toURI().toURL() + "!/nested.jar!/", this.handler)
+		URLConnection connection = Urls.create(null, "jar:" + testJar.toURI().toURL() + "!/nested.jar!/", this.handler, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS)
 			.openConnection();
 		assertThat(connection).isInstanceOf(JarURLConnection.class);
 		((JarURLConnection) connection).getJarFile().close();
-		URLConnection jdkConnection = new URL(null, "jar:file:" + testJar.toURI().toURL() + "!/nested.jar!/",
-				this.handler)
+		URLConnection jdkConnection = Urls.create(null, "jar:file:" + testJar.toURI().toURL() + "!/nested.jar!/", this.handler, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS)
 			.openConnection();
 		assertThat(jdkConnection).isNotInstanceOf(JarURLConnection.class);
 		assertThat(jdkConnection.getClass().getName()).endsWith(".JarURLConnection");
@@ -175,7 +176,7 @@ class HandlerTests {
 	void whenJarHasAPlusInItsPathConnectionJarFileMatchesOriginalJarFile(@TempDir File tempDir) throws Exception {
 		File testJar = new File(tempDir, "t+e+s+t.jar");
 		TestJarCreator.createTestJar(testJar);
-		URL url = new URL(null, "jar:" + testJar.toURI().toURL() + "!/nested.jar!/3.dat", this.handler);
+		URL url = Urls.create(null, "jar:" + testJar.toURI().toURL() + "!/nested.jar!/3.dat", this.handler, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		JarURLConnection connection = (JarURLConnection) url.openConnection();
 		try (JarFile jarFile = JarFileWrapper.unwrap(connection.getJarFile())) {
 			assertThat(jarFile.getRootJarFile().getFile()).isEqualTo(testJar);
@@ -186,7 +187,7 @@ class HandlerTests {
 	void whenJarHasASpaceInItsPathConnectionJarFileMatchesOriginalJarFile(@TempDir File tempDir) throws Exception {
 		File testJar = new File(tempDir, "t e s t.jar");
 		TestJarCreator.createTestJar(testJar);
-		URL url = new URL(null, "jar:" + testJar.toURI().toURL() + "!/nested.jar!/3.dat", this.handler);
+		URL url = Urls.create(null, "jar:" + testJar.toURI().toURL() + "!/nested.jar!/3.dat", this.handler, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		JarURLConnection connection = (JarURLConnection) url.openConnection();
 		try (JarFile jarFile = JarFileWrapper.unwrap(connection.getJarFile())) {
 			assertThat(jarFile.getRootJarFile().getFile()).isEqualTo(testJar);
@@ -194,8 +195,8 @@ class HandlerTests {
 	}
 
 	private void assertStandardAndCustomHandlerUrlsAreEqual(String context, String spec) throws MalformedURLException {
-		URL standardUrl = new URL(new URL("jar:" + context), spec);
-		URL customHandlerUrl = new URL(new URL("jar", null, -1, context, this.handler), spec);
+		URL standardUrl = Urls.create(Urls.create("jar:" + context, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS), spec, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
+		URL customHandlerUrl = Urls.create(Urls.create("jar", null, -1, context, this.handler, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS), spec, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		assertThat(customHandlerUrl).hasToString(standardUrl.toString());
 		assertThat(customHandlerUrl.getFile()).isEqualTo(standardUrl.getFile());
 		assertThat(customHandlerUrl.getPath()).isEqualTo(standardUrl.getPath());
@@ -204,7 +205,7 @@ class HandlerTests {
 	}
 
 	private URL createUrl(String file) throws MalformedURLException {
-		return new URL("jar", null, -1, file, this.handler);
+		return Urls.create("jar", null, -1, file, this.handler, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 	}
 
 }

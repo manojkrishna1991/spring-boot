@@ -16,6 +16,8 @@
 
 package org.springframework.boot.actuate.autoconfigure.metrics.export.prometheus;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
@@ -143,7 +145,7 @@ public class PrometheusMetricsExportAutoConfiguration {
 		}
 
 		private PushGateway initializePushGateway(String url) throws MalformedURLException {
-			return new PushGateway(new URL(url));
+			return new PushGateway(Urls.create(url, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
 		}
 
 		private String getJob(PrometheusProperties.Pushgateway properties, Environment environment) {

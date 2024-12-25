@@ -16,6 +16,8 @@
 
 package org.springframework.boot.devtools.restart.server;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -88,11 +90,11 @@ class DefaultSourceDirectoryUrlFilterTests {
 
 	private List<URL> getUrls(String name) throws MalformedURLException {
 		List<URL> urls = new ArrayList<>();
-		urls.add(new URL("file:/some/path/" + name));
-		urls.add(new URL("file:/some/path/" + name + "!/"));
+		urls.add(Urls.create("file:/some/path/" + name, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
+		urls.add(Urls.create("file:/some/path/" + name + "!/", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
 		for (String postfix : COMMON_POSTFIXES) {
-			urls.add(new URL("jar:file:/some/path/lib-module" + postfix + "!/lib/" + name));
-			urls.add(new URL("jar:file:/some/path/lib-module" + postfix + "!/lib/" + name + "!/"));
+			urls.add(Urls.create("jar:file:/some/path/lib-module" + postfix + "!/lib/" + name, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
+			urls.add(Urls.create("jar:file:/some/path/lib-module" + postfix + "!/lib/" + name + "!/", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
 		}
 		return urls;
 	}

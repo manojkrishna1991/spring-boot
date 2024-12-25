@@ -16,6 +16,8 @@
 
 package org.springframework.boot.loader.net.protocol.jar;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -78,7 +80,7 @@ class UrlJarFileFactoryTests {
 	void createJarFileWhenNested() throws Throwable {
 		File file = new File(this.temp, "test.jar");
 		TestJar.create(file);
-		URL url = new URL("nested:" + file.getPath() + "/!nested.jar");
+		URL url = Urls.create("nested:" + file.getPath() + "/!nested.jar", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		JarFile jarFile = this.factory.createJarFile(url, this.closeAction);
 		assertThat(jarFile).isInstanceOf(UrlNestedJarFile.class);
 		assertThat(jarFile).hasFieldOrPropertyWithValue("closeAction", this.closeAction);
@@ -98,7 +100,7 @@ class UrlJarFileFactoryTests {
 		});
 		server.start();
 		try {
-			URL url = new URL("http://localhost:" + server.getAddress().getPort() + "/test");
+			URL url = Urls.create("http://localhost:" + server.getAddress().getPort() + "/test", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 			JarFile jarFile = this.factory.createJarFile(url, this.closeAction);
 			assertThat(jarFile).isInstanceOf(UrlJarFile.class);
 			assertThat(jarFile).hasFieldOrPropertyWithValue("closeAction", this.closeAction);
