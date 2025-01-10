@@ -16,6 +16,7 @@
 
 package org.springframework.boot.cli.command.init;
 
+import io.github.pixee.security.ZipSecurity;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -94,7 +95,7 @@ class ProjectGenerator {
 		if (!outputDirectory.exists()) {
 			outputDirectory.mkdirs();
 		}
-		try (ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(entity.getContent()))) {
+		try (ZipInputStream zipStream = ZipSecurity.createHardenedInputStream(new ByteArrayInputStream(entity.getContent()))) {
 			extractFromStream(zipStream, overwrite, outputDirectory);
 			fixExecutableFlag(outputDirectory, "mvnw");
 			fixExecutableFlag(outputDirectory, "gradlew");

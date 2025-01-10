@@ -16,6 +16,7 @@
 
 package org.springframework.boot.cli.infrastructure;
 
+import io.github.pixee.security.ZipSecurity;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -84,7 +85,7 @@ public final class CommandLineInvoker {
 		if (!unpacked.isDirectory()) {
 			File zip = new File(new BuildOutput(getClass()).getRootLocation(),
 					"distributions/spring-boot-cli-" + Versions.getBootVersion() + "-bin.zip");
-			try (ZipInputStream input = new ZipInputStream(new FileInputStream(zip))) {
+			try (ZipInputStream input = ZipSecurity.createHardenedInputStream(new FileInputStream(zip))) {
 				ZipEntry entry;
 				while ((entry = input.getNextEntry()) != null) {
 					File file = new File(unpacked, entry.getName());
