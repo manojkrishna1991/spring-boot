@@ -16,6 +16,7 @@
 
 package org.springframework.boot.gradle.tasks.bundling;
 
+import io.github.pixee.security.ZipSecurity;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -261,8 +262,7 @@ abstract class AbstractBootArchiveTests<T extends Jar & BootArchive> {
 			assertThat(jarFile.getEntry("org/springframework/boot/loader/")).isNotNull();
 		}
 		// gh-16698
-		try (ZipInputStream zipInputStream = new ZipInputStream(
-				new FileInputStream(this.task.getArchiveFile().get().getAsFile()))) {
+		try (ZipInputStream zipInputStream = ZipSecurity.createHardenedInputStream(new FileInputStream(this.task.getArchiveFile().get().getAsFile()))) {
 			assertThat(zipInputStream.getNextEntry().getName()).isEqualTo("META-INF/");
 			assertThat(zipInputStream.getNextEntry().getName()).isEqualTo("META-INF/MANIFEST.MF");
 		}
